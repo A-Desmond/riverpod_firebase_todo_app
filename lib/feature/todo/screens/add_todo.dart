@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/feature/todo/controller/todo_controller.dart';
+import 'package:todo/model/todo_model.dart';
 
 class AddTodoScreen extends ConsumerStatefulWidget {
-  const AddTodoScreen({super.key});
+  Todo? todo;
+  final bool isUpdate;
+  AddTodoScreen({super.key, required this.isUpdate, this.todo});
 
   @override
   ConsumerState<AddTodoScreen> createState() => _AddTodoScreenState();
@@ -22,9 +25,10 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(todoControllerProvider);
+    final actions = ref.watch(todoControllerProvider.notifier);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Todo '),
+        title: Text(widget.isUpdate ? 'Update Todo' : 'Add Todo '),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -35,7 +39,7 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
               child: TextField(
                 controller: titleController,
                 decoration: InputDecoration(
-                    hintText: 'Title',
+                    hintText: widget.isUpdate ? widget.todo!.title : 'Title',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5)))),
               ),
@@ -46,10 +50,11 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
               child: TextField(
                 maxLines: 10,
                 controller: detailsController,
-                decoration: const InputDecoration(
-                    border: OutlineInputBorder(
+                decoration: InputDecoration(
+                    border: const OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(5))),
-                    hintText: 'Details'),
+                    hintText:
+                        widget.isUpdate ? widget.todo!.details : 'Details'),
               ),
             ),
             const SizedBox(
@@ -59,12 +64,18 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
                 ? CircularProgressIndicator.adaptive()
                 : ElevatedButton(
                     onPressed: () {
-                      ref.watch(todoControllerProvider.notifier).addTodoCtrl(
-                            title: titleController.text,
-                            details: detailsController.text,
-                            context: context,
-                            success: () => Navigator.of(context).pop(),
-                          );
+                      widget.isUpdate
+                          ? actions.updateTodoCtrl(
+                              todo: Todo(
+                                  id: widget.todo!.id,
+                                  title: titleController.text,
+                                  details: detailsController.text),
+                              context: context)
+                          : actions.addTodoCtrl(
+                              title: titleController.text,
+                              details: detailsController.text,
+                              context: context,
+                            );
                     },
                     child: const Text('ADD TODO'),
                   )

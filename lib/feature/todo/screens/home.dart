@@ -5,10 +5,6 @@ import 'package:todo/feature/todo/screens/add_todo.dart';
 import 'package:todo/feature/todo/widgets/todo_card.dart';
 import 'package:todo/model/todo_model.dart';
 
-List<Todo> todoList = [
-  Todo(id: 'id', title: 'Hello', details: 'I want to blow the cash'),
-  Todo(id: 'id', title: 'Hello', details: 'I want to blow the cash'),
-];
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -16,54 +12,34 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final todoProvider = ref.watch(getTodoProvider);
+    final todoCtrlState = ref.watch(todoControllerProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('TODO MASTER'),
-        centerTitle: true,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const AddTodoScreen()));
-        },
-        child: const Text('Add'),
-      ),
-      body: ListView.builder(
-        shrinkWrap: true,
-          itemCount: todoList.length,
-          itemBuilder: (context, index) {
-           
-            return TodoCard(
-              todo: todoList[index],
-            );
-          }),
-      /*todoProvider.when(
-              data: (todoList) {
-                todoList
-                    .add(Todo(id: 'dd', title: 'Helllo', details: 'WJHHHS'));
-                return ListView.builder(
-                    itemCount: todoList.length,
-                    itemBuilder: (context, index) {
-                      final todo = todoList[index];
-                      return TodoCard(
-                        todo: todo,
-                      );
-                    });
-              },
-              error: (error, trace) {
-                return Center(
-                  child: ListView.builder(
+        appBar: AppBar(
+          title: const Text('TODO MASTER'),
+          centerTitle: true,
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) =>  AddTodoScreen(isUpdate: false,)));
+          },
+          child: const Text('Add'),
+        ),
+        body: todoProvider.when(
+            data: (todoList) {
+              return ListView.builder(
                       itemCount: todoList.length,
                       itemBuilder: (context, index) {
                         final todo = todoList[index];
-                        return TodoCard(
+                        return todoList.isEmpty? Center(child: Text('NO items added yet'),) :TodoCard(
                           todo: todo,
                         );
-                      }),
-                );
-              },
-              loading: () =>
-                  const Center(child: CircularProgressIndicator.adaptive()))*/
-    );
+                      });
+            },
+            error: (error, trace) {
+              return Center(child: Text('Error ${error.toString()}'));
+            },
+            loading: () =>
+                const Center(child: CircularProgressIndicator.adaptive())));
   }
 }

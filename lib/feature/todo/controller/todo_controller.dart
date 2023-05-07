@@ -10,7 +10,7 @@ final todoControllerProvider =
   return TodoController(remoteData: ref.watch(remoteDataProvider));
 });
 
-final getTodoProvider = FutureProvider.autoDispose<List<Todo>>((ref) async {
+final getTodoProvider = StreamProvider.autoDispose<List<Todo>>((ref){
   return ref.watch(remoteDataProvider).getTodo();
 });
 
@@ -26,7 +26,7 @@ class TodoController extends StateNotifier<bool> {
     required String title,
     required String details,
     required BuildContext context,
-    required Function success,
+  
   }) async {
     state = true;
     String id = const Uuid().v1();
@@ -35,7 +35,9 @@ class TodoController extends StateNotifier<bool> {
     state = false;
     response.fold(
       (l) => Alerts.snackBar(context, 'Error ${l.error}'),
-      (r) => success,
+      (r){
+        Navigator.pop(context);
+      },
     );
   }
 

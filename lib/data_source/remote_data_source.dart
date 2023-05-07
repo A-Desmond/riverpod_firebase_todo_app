@@ -44,11 +44,11 @@ class RemoteData {
   }
 
 // get list of all todo
-  Future<List<Todo>> getTodo() async {
+  Stream<List<Todo>> getTodo() {
     try {
-      final todos = await _firestore.collection('todo').get();
+      final todo =  _firestore.collection('todo').snapshots();
       final todoList =
-          todos.docs.map((todo) => Todo.fromMap(todo.data())).toList();
+          todo.map((event) => event.docs.map((result) => Todo.fromMap(result.data())).toList());
       return todoList;
     } on FirebaseException catch (e) {
       rethrow;
