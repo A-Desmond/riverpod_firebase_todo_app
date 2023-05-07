@@ -5,7 +5,7 @@ import 'package:todo/feature/todo/screens/home.dart';
 import 'package:todo/firebase_options.dart';
 
 void main() async{
-
+  WidgetsFlutterBinding.ensureInitialized();
 await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
 );
@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         title: 'TODO MASTER',
         theme: ThemeData(
+          useMaterial3: true,
           primarySwatch: Colors.blue,
         ),
         home: const HomeScreen());

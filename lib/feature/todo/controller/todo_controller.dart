@@ -34,7 +34,7 @@ class TodoController extends StateNotifier<bool> {
     final response = await _rData.addTodo(todo: todo);
     state = false;
     response.fold(
-      (l) => Alerts.snackBar(context, 'Error $l'),
+      (l) => Alerts.snackBar(context, 'Error ${l.error}'),
       (r) => success,
     );
   }

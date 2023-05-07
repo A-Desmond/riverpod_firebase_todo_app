@@ -12,15 +12,16 @@ class TodoCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final todoCtrlState = ref.watch(todoControllerProvider);
-    final todoCtrl = ref.watch(todoControllerProvider.notifier);
-    return Container(
-      decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(12),
-          shape: BoxShape.rectangle),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
+    // final todoCtrlState = ref.watch(todoControllerProvider);
+    // final todoCtrl = ref.watch(todoControllerProvider.notifier);
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        height: 150,
+        decoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(12),
+            shape: BoxShape.rectangle),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -35,25 +36,22 @@ class TodoCard extends ConsumerWidget {
                 child: Text(
                   todo.details,
                   style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.w800),
+                      fontSize: 20, fontWeight: FontWeight.w400),
                 ),
               ),
-              const SizedBox(height: 2),
               Container(
-                child: todoCtrlState
-                    ? const CircularProgressIndicator()
-                    : Row(
-                        children: [
-                          IconButton(
-                              onPressed: () => todoCtrl.deleteTodoCtrl(
-                                  todoId: todo.id, context: context),
-                              icon: const Icon(Icons.delete)),
-                          IconButton(
-                              onPressed: () => todoCtrl.updateTodoCtrl(
-                                  todo: todo, context: context),
-                              icon: const Icon(Icons.update)),
-                        ],
-                      ),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(9),
+                    color: Colors.green.withOpacity(0.3)),
+                child: Row(
+                  children: [
+                    IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.update)),
+                    Spacer(),
+                    IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.delete)),
+                  ],
+                ),
               )
             ],
           ),

@@ -5,6 +5,11 @@ import 'package:todo/feature/todo/screens/add_todo.dart';
 import 'package:todo/feature/todo/widgets/todo_card.dart';
 import 'package:todo/model/todo_model.dart';
 
+List<Todo> todoList = [
+  Todo(id: 'id', title: 'Hello', details: 'I want to blow the cash'),
+  Todo(id: 'id', title: 'Hello', details: 'I want to blow the cash'),
+];
+
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -23,9 +28,16 @@ class HomeScreen extends ConsumerWidget {
         },
         child: const Text('Add'),
       ),
-      body: Padding(
-          padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
-          child: todoProvider.when(
+      body: ListView.builder(
+        shrinkWrap: true,
+          itemCount: todoList.length,
+          itemBuilder: (context, index) {
+           
+            return TodoCard(
+              todo: todoList[index],
+            );
+          }),
+      /*todoProvider.when(
               data: (todoList) {
                 todoList
                     .add(Todo(id: 'dd', title: 'Helllo', details: 'WJHHHS'));
@@ -39,12 +51,19 @@ class HomeScreen extends ConsumerWidget {
                     });
               },
               error: (error, trace) {
-                return const Center(
-                  child: Text('Error fetching todo'),
+                return Center(
+                  child: ListView.builder(
+                      itemCount: todoList.length,
+                      itemBuilder: (context, index) {
+                        final todo = todoList[index];
+                        return TodoCard(
+                          todo: todo,
+                        );
+                      }),
                 );
               },
               loading: () =>
-                  const Center(child: CircularProgressIndicator.adaptive()))),
+                  const Center(child: CircularProgressIndicator.adaptive()))*/
     );
   }
 }

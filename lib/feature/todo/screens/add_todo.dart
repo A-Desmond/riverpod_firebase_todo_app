@@ -24,42 +24,50 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
     final state = ref.watch(todoControllerProvider);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add To '),
+        title: const Text('Add Todo '),
       ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
-              controller: titleController,
-              decoration: InputDecoration(
-                  hintText: 'Title',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5)))),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                controller: titleController,
+                decoration: InputDecoration(
+                    hintText: 'Title',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5)))),
+              ),
             ),
             const SizedBox(height: 30),
-            TextField(
-              controller: detailsController,
-              decoration: const InputDecoration(
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5))),
-                  hintText: 'Details'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextField(
+                maxLines: 10,
+                controller: detailsController,
+                decoration: const InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(5))),
+                    hintText: 'Details'),
+              ),
             ),
             const SizedBox(
               height: 70,
             ),
-            ElevatedButton(
-              onPressed: () {
-                ref.watch(todoControllerProvider.notifier).addTodoCtrl(
-                      title: titleController.text,
-                      details: detailsController.text,
-                      context: context,
-                      success: () => Navigator.of(context).pop(),
-                    );
-              },
-              child:
-                  state ? const Text('ADD TODO') : CircularProgressIndicator(),
-            )
+            state
+                ? CircularProgressIndicator.adaptive()
+                : ElevatedButton(
+                    onPressed: () {
+                      ref.watch(todoControllerProvider.notifier).addTodoCtrl(
+                            title: titleController.text,
+                            details: detailsController.text,
+                            context: context,
+                            success: () => Navigator.of(context).pop(),
+                          );
+                    },
+                    child: const Text('ADD TODO'),
+                  )
           ],
         ),
       ),
