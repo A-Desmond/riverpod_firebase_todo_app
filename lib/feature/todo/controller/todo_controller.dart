@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo/data_source/remote_data_source.dart';
 import 'package:todo/feature/todo/widgets/snack_bar.dart';
 import 'package:todo/model/todo_model.dart';
+import 'package:uuid/uuid.dart';
 
 final todoControllerProvider =
     StateNotifierProvider<TodoController, bool>((ref) {
@@ -21,39 +22,45 @@ class TodoController extends StateNotifier<bool> {
       : _rData = remoteData,
         super(false);
 
-  Future<void> addTodoCtrl({
+  void addTodoCtrl({
     required String title,
     required String details,
     required BuildContext context,
+    required Function success,
   }) async {
-    String test = 'TETSTS';
-    final Todo todo = Todo(id: test, title: title, details: details);
     state = true;
-    await _rData
-        .addTodo(todo: todo)
-        .then((value) => Alerts.snackBar(context, 'To added'));
+    String id = const Uuid().v1();
+    final Todo todo = Todo(id: id, title: title, details: details);
+    final response = await _rData.addTodo(todo: todo);
     state = false;
+    response.fold(
+      (l) => Alerts.snackBar(context, 'Error $l'),
+      (r) => success,
+    );
   }
 
-  Future<void> deleteTodoCtrl({
+  void deleteTodoCtrl({
     required String todoId,
     required BuildContext context,
   }) async {
     state = true;
-    await _rData
-        .deleteTodo(todoId: todoId)
-        .then((value) => Alerts.snackBar(context, 'To added'));
+    final response = await _rData.deleteTodo(todoId: todoId);
     state = false;
+    response.fold(
+      (l) => Alerts.snackBar(context, 'Error $l'),
+      (r) => Alerts.snackBar(context, 'Todo deleted'),
+    );
   }
 
-  Future<void> updateTodoCtrl({
+  void updateTodoCtrl({
     required Todo todo,
     required BuildContext context,
   }) async {
     state = true;
-    await _rData
-        .updateTodo(todo: todo)
-        .then((value) => Alerts.snackBar(context, 'To added'));
+    final response = await _rData.updateTodo(todo: todo);
+
     state = false;
+    response.fold((l) => Alerts.snackBar(context, 'Error $l'),
+        (r) => Alerts.snackBar(context, 'Todo updated'));
   }
 }

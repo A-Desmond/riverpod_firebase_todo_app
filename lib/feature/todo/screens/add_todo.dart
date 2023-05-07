@@ -13,7 +13,15 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
   final titleController = TextEditingController();
   final detailsController = TextEditingController();
   @override
+  void dispose() {
+    super.dispose();
+    titleController.dispose();
+    detailsController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(todoControllerProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add To '),
@@ -24,25 +32,34 @@ class _AddTodoScreenState extends ConsumerState<AddTodoScreen> {
           children: [
             TextField(
               controller: titleController,
-              decoration: const InputDecoration(hintText: 'Title'),
+              decoration: InputDecoration(
+                  hintText: 'Title',
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5)))),
             ),
             const SizedBox(height: 30),
             TextField(
               controller: detailsController,
-              decoration: const InputDecoration(hintText: 'Details'),
+              decoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                  hintText: 'Details'),
             ),
             const SizedBox(
               height: 70,
             ),
             ElevatedButton(
-                onPressed: () {
-                  ref.watch(todoControllerProvider.notifier).addTodoCtrl(
-                        title: titleController.text,
-                        details: detailsController.text,
-                        context: context,
-                      );
-                },
-                child: const Text('ADD TODO'))
+              onPressed: () {
+                ref.watch(todoControllerProvider.notifier).addTodoCtrl(
+                      title: titleController.text,
+                      details: detailsController.text,
+                      context: context,
+                      success: () => Navigator.of(context).pop(),
+                    );
+              },
+              child:
+                  state ? const Text('ADD TODO') : CircularProgressIndicator(),
+            )
           ],
         ),
       ),
